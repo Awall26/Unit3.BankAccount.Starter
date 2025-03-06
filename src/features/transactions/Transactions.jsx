@@ -1,7 +1,8 @@
 import { useState } from "react";
-
-import { transfer } from "./transactionsSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { transfer, withdrawal, deposit } from "./transactionsSlice";
 import "./transactions.scss";
+import { selectBalance } from "./transactionsSlice";
 
 /**
  * Allows users to deposit to, withdraw from, and transfer money from their account.
@@ -9,10 +10,11 @@ import "./transactions.scss";
 export default function Transactions() {
   // TODO: Get the balance from the Redux store using the useSelector hook
   const balance = 0;
-
+  const dispatch = useDispatch();
+  const storeBalance = useSelector(selectBalance);
   const [amountStr, setAmountStr] = useState("0.00");
   const [recipient, setRecipient] = useState("");
-
+  console.log(storeBalance);
   /** Dispatches a transaction action based on the form submission. */
   const onTransaction = (e) => {
     e.preventDefault();
@@ -29,6 +31,12 @@ export default function Transactions() {
       // the amount and the recipient.
       dispatch(transfer({ amount, recipient }));
     }
+    if (action === "deposit") {
+      dispatch(deposit({ amount }));
+    }
+    if (action === "withdraw") {
+      dispatch(withdrawal({ amount }));
+    }
   };
 
   return (
@@ -36,7 +44,7 @@ export default function Transactions() {
       <h2>Transactions</h2>
       <figure>
         <figcaption>Current Balance &nbsp;</figcaption>
-        <strong>${balance.toFixed(2)}</strong>
+        <strong>${storeBalance.toFixed(2)}</strong>
       </figure>
       <form onSubmit={onTransaction}>
         <div className="form-row">
